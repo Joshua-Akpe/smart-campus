@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Submit Complaint{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Submit a Complaint</h1>
+    <p>Fill in the form below and we will review your complaint as soon as possible</p>
+</div>
+
+<div class="form-container">
+
+    {% if error %}
+    <div class="alert alert-error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/complaints/submit">
+
+        <div class="form-group">
+            <label for="title">Complaint Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Give your complaint a clear, short title"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="" disabled selected>Select a category</option>
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category | title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                rows="6"
+                placeholder="Describe your complaint in detail. Include relevant locations, dates, and any other helpful information."
+                required
+            ></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a href="/dashboard" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Submit Complaint</button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

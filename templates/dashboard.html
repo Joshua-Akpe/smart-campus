@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Welcome, {{ user.full_name }}</h1>
+    <p>Track and manage your complaints below</p>
+</div>
+
+{% if request.query_params.get("submitted") %}
+<div class="alert alert-success">
+    Your complaint has been submitted successfully. We will review it shortly.
+</div>
+{% endif %}
+
+{% if notifications %}
+<div class="alert alert-info">
+    <strong>You have {{ unread_count }} unread notification(s):</strong>
+    <ul>
+        {% for notification in notifications %}
+        <li>{{ notification.message }}</li>
+        {% endfor %}
+    </ul>
+    <form method="POST" action="/notifications/read">
+        <button type="submit" class="btn-small">Mark all as read</button>
+    </form>
+</div>
+{% endif %}
+
+<div class="dashboard-actions">
+    <a href="/complaints/submit" class="btn-primary">+ Submit New Complaint</a>
+</div>
+
+<div class="complaints-section">
+    <h2>Your Complaints</h2>
+
+    {% if complaints %}
+    <table class="complaints-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Date Submitted</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for complaint in complaints %}
+            <tr>
+                <td>{{ complaint.id }}</td>
+                <td>{{ complaint.title }}</td>
+                <td class="category-badge">{{ complaint.category.value | title }}</td>
+                <td>
+                    <span class="status-badge status-{{ complaint.status.value }}">
+                        {{ complaint.status.value.replace('_', ' ') | title }}
+                    </span>
+                </td>
+                <td>{{ complaint.created_at.strftime('%d %b %Y') }}</td>
+                <td><a href="/complaints/{{ complaint.id }}" class="btn-small">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div class="empty-state">
+        <p>You have not submitted any complaints yet.</p>
+        <a href="/complaints/submit" class="btn-primary">Submit your first complaint</a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

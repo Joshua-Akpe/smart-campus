@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+
+        <div class="auth-header">
+            <h1>🎓 Create Account</h1>
+            <p>Pan-Atlantic University Feedback System</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/register">
+
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    placeholder="Enter your full name"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your university email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="matric_number">Matric Number <span class="optional">(students only)</span></label>
+                <input
+                    type="text"
+                    id="matric_number"
+                    name="matric_number"
+                    placeholder="e.g. 20/0123"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="role">Register As</label>
+                <select id="role" name="role">
+                    <option value="student">Student</option>
+                    <option value="staff">Staff</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Choose a password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <p class="auth-footer">
+            Already have an account? <a href="/login">Login here</a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Complaint #{{ complaint.id }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% if is_admin is defined and is_admin %}/admin/dashboard{% else %}/dashboard{% endif %}" 
+       class="btn-back">← Back</a>
+    <h1>Complaint #{{ complaint.id }}</h1>
+</div>
+
+<div class="complaint-detail-container">
+
+    <!-- Complaint Info -->
+    <div class="complaint-card">
+        <div class="complaint-meta">
+            <span class="category-badge">{{ complaint.category.value | title }}</span>
+            <span class="status-badge status-{{ complaint.status.value }}">
+                {{ complaint.status.value.replace('_', ' ') | title }}
+            </span>
+            <span class="complaint-date">
+                Submitted: {{ complaint.created_at.strftime('%d %b %Y, %I:%M %p') }}
+            </span>
+        </div>
+
+        <h2>{{ complaint.title }}</h2>
+        <p class="complaint-description">{{ complaint.description }}</p>
+
+        <div class="complaint-owner">
+            Submitted by: <strong>{{ complaint.owner.full_name }}</strong>
+        </div>
+    </div>
+
+    <!-- Admin Status Update Form -->
+    {% if is_admin is defined and is_admin %}
+    <div class="admin-action-card">
+        <h3>Update Status</h3>
+        <form method="POST" action="/admin/complaints/{{ complaint.id }}/update">
+
+            <div class="form-group">
+                <label for="new_status">New Status</label>
+                <select id="new_status" name="new_status" required>
+                    {% for s in statuses %}
+                    <option value="{{ s }}" {% if s == complaint.status.value %}selected{% endif %}>
+                        {{ s.replace('_', ' ') | title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="note">Note <span class="optional">(optional)</span></label>
+                <textarea
+                    id="note"
+                    name="note"
+                    rows="3"
+                    placeholder="Add a note to explain the status change..."
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary">Update Status</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Status History -->
+    <div class="history-card">
+        <h3>Status History</h3>
+
+        {% if status_updates %}
+        <ul class="status-timeline">
+            {% for update in status_updates %}
+            <li class="timeline-item">
+                <div class="timeline-marker status-{{ update.new_status.value }}"></div>
+                <div class="timeline-content">
+                    <strong>
+                        {{ update.old_status.value.replace('_', ' ') | title }}
+                        → {{ update.new_status.value.replace('_', ' ') | title }}
+                    </strong>
+                    {% if update.note %}
+                    <p>{{ update.note }}</p>
+                    {% endif %}
+                    <span class="timeline-date">
+                        {{ update.timestamp.strftime('%d %b %Y, %I:%M %p') }}
+                    </span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% else %}
+        <p class="empty-state-small">No status updates yet.</p>
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}
